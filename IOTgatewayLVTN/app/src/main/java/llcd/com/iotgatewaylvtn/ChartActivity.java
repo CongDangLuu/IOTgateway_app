@@ -5,7 +5,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +23,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -32,40 +37,57 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
 
 public class ChartActivity extends AppCompatActivity {
     Button NDChart, DAChart, ASChart;
+
     LineChart chart;
+    XAxis xAxis;
+    YAxis leftAxis;
+    Date datetime;
+    String Timest, day, Pre_day, time,set_day="";
+
+
     Float ValOfChart;
     String URL;
     String Lable = "Nhiệt độ";
     String typeData = "ND";
+
+    private Spinner spnCategory;
+    private List<String> list;
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
-        chart = findViewById(R.id.NhietdoChart);
+
         NDChart = findViewById(R.id.BtnNDChart);
         ASChart = findViewById(R.id.BtnASChart);
         DAChart = findViewById(R.id.BtnDAChart);
 
+        chart = findViewById(R.id.NhietdoChart);
+        xAxis = chart.getXAxis();
+        leftAxis = chart.getAxisLeft();
+
+        spnCategory = findViewById(R.id.spnCategory);
+
+        //URL = "http://luanvanlogistic.highallnight.com/AppIoTgateway/AndroidGetdata/getdataWIF1.php";
         URL = BtnActivity.GETDATA_URL;
-        new CountDownTimer(1000000000, 1000) {
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                GetChart(URL, chart, Lable, typeData);
+        combobox(URL);
 
-            }
-
-            @Override
-            public void onFinish() {
-
-            }
-        }.start();
 
         NDChart.setOnClickListener(new View.OnClickListener() {
 
@@ -73,6 +95,7 @@ public class ChartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Lable = "Nhiệt độ";
                 typeData = "ND";
+                GetChart(URL, Lable, typeData, set_day);
             }
         });
 
@@ -82,6 +105,7 @@ public class ChartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Lable = "Độ ẩm";
                 typeData = "DA";
+                GetChart(URL, Lable, typeData, set_day);
             }
         });
 
@@ -90,86 +114,109 @@ public class ChartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Lable = "Ánh sáng";
                 typeData = "AS";
+                GetChart(URL, Lable, typeData, set_day);
             }
         });
 
     }
 //set data--------------------------------
 
-    private void GetChart(String url, LineChart lineChart, String lable, String type) {
+    private void GetChart(String url, String lable, String type, String day_c) {
         RequestQueue queue = Volley.newRequestQueue(this);
         // 2.truyền đường dẫn vào request
         JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
-                lineChart.setDragEnabled(true);
-                lineChart.setScaleEnabled(true);
-
+                chart.setDragEnabled(true);
+                chart.setScaleEnabled(true);
+                setupchart(type);
                 ArrayList<Entry> dataSet = new ArrayList<Entry>();
-                for (int i = response.length() - 10; i < response.length(); i++) {
-                    try {
-                        JSONObject person = response.getJSONObject(i);
-                        ValOfChart = Float.parseFloat(person.getString(type));
-                        String Timest = person.getString("Time");
-                        dataSet.add(new Entry(i, ValOfChart));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                for (int i = 0; i < 24; i++) {
+                    float sum=0;
+                    int a = 0;
+                    int t =0;
+                    for (int j = 0; j < response.length(); j++) {
+                        try {
+                            JSONObject person = response.getJSONObject(j);
+                            Timest = person.getString("Time");
+                            String splits[] = Timest.split(" ");
+                            String tg[] = splits[1].split(":");
+                            day = splits[0];
+                            time = tg[0];
+                             t = Integer.parseInt(time);
+                            if((day.equals(day_c))&&(i==t)){
+                                float value = Float.parseFloat(person.getString(type));
+                                 sum +=value;
+                                 a++;
+                            }
+
+                        } catch (JSONException e) {
+                                e.printStackTrace();
+                        }
                     }
+                    float x = sum/a;
+                    ValOfChart = (float)Math.round(x * 100)/100;
+                    dataSet.add(new Entry(i, ValOfChart));
+
                 }
 
-                LineDataSet lineDataSet = new LineDataSet(dataSet, lable);
+
+                String str = lable + " - " + day_c;
+                LineDataSet lineDataSet = new LineDataSet(dataSet, str);
                 ArrayList<ILineDataSet> iLineDataSets = new ArrayList<>();
                 iLineDataSets.add(lineDataSet);
 
                 LineData lineData = new LineData(iLineDataSets);
-                lineChart.setData(lineData);
-                lineChart.invalidate();
+                chart.setData(lineData);
+                chart.invalidate();
 
-                //if you want set background color use below method
-                //lineChart.setBackgroundColor(Color.RED);
-
-                // set text if data are are not available
-                lineChart.setNoDataText("Data not Available");
+                chart.setNoDataText("Data not Available");
 
                 //you can modify your line chart graph according to your requirement there are lots of method available in this library
                 //now customize line chart
+                int color;
                 switch (type) {
                     case "ND":
-                        lineDataSet.setColor(Color.RED);
+                        color = Color.RED;
                         break;
                     case "DA":
-                        lineDataSet.setColor(Color.BLUE);
+                        color = Color.BLUE;
                         break;
                     case "AS":
-                        lineDataSet.setColor(Color.YELLOW);
+                        color = Color.YELLOW;
                         break;
                     default:
-                        lineDataSet.setColor(Color.RED);
+                        color = Color.RED;
                         break;
                 }
-
-
+                lineDataSet.setColor(color);
+                Legend legend = chart.getLegend();
+                int[] colorClassArray = new int[] {color};
+                String[] legendName = {str};
+                LegendEntry[] legendEntries = new LegendEntry[1];
+                LegendEntry entry = new LegendEntry();
+                entry.formColor = colorClassArray[0];
+                entry.label = String.valueOf(legendName[0]);
+                legendEntries[0] = entry;
+                legend.setCustom(legendEntries);
                 lineDataSet.setDrawCircles(false);
 
-                lineDataSet.setLineWidth(3);
-                //lineDataSet.setCircleRadius(10);
-                //lineDataSet.setCircleHoleRadius(10);
-                lineDataSet.setValueTextSize(13);
+                lineDataSet.setLineWidth(1.2f);
                 lineDataSet.setValueTextColor(Color.BLACK);
+                lineDataSet.setValueTextSize(9f);
 
-                Legend legend = lineChart.getLegend();
                 legend.setTextSize(15);
                 legend.setForm(Legend.LegendForm.LINE);
                 legend.setXEntrySpace(15);
                 legend.setFormSize(17);
-                legend.setFormToTextSpace(5);
+                legend.setFormToTextSpace(10);
 
                 Description descrip = new Description();
                 descrip.setText(" ");
                 descrip.setTextColor(Color.BLACK);
-                descrip.setTextSize(16);
-                lineChart.setDescription(descrip);
+                descrip.setTextSize(17);
+                chart.setDescription(descrip);
 
 
             }
@@ -181,6 +228,87 @@ public class ChartActivity extends AppCompatActivity {
         //4. add
         queue.add(req);
     }
+
+
+    private void setupchart(String type){
+
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(23f);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawGridLines(true);
+
+        if( type=="ND"){
+
+            leftAxis.setAxisMinimum(0f);
+            leftAxis.setAxisMaximum(45f);
+        }else if( type=="AS"){
+            leftAxis.setAxisMinimum(0f);
+            leftAxis.setAxisMaximum(200f);
+        }else if( type == "DA"){
+            leftAxis.setAxisMinimum(40f);
+            leftAxis.setAxisMaximum(100f);
+        }
+    }
+
+    private void combobox(String url) {
+        list = new ArrayList<>();
+
+        // 1.Khởi tạo request
+        RequestQueue queue = Volley.newRequestQueue(this);
+        // 2.truyền đường dẫn vào request
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                // chuyen mang thanh chuoi
+                Pre_day=day="";
+
+                for (int i = response.length() - 1; i >= 0; i--) {
+                    try {
+                        JSONObject person = response.getJSONObject(i);
+                        Timest = person.getString("Time");
+                        String Spl[] = Timest.split(" ");
+                        day = Spl[0];
+                        if(!(day.equals(Pre_day))){
+                            list.add(day);
+                            Pre_day=day;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                showCombobox(list);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        queue.add(req);
+    }
+
+    private void showCombobox(List<String> list){
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spnCategory.setAdapter(adapter);
+        spnCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                set_day = list.get(position);
+                GetChart(URL, Lable, typeData, set_day);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                set_day= list.get(0);
+                GetChart(URL, Lable, typeData, set_day);
+            }
+        });
+    }
+
 }
 
 

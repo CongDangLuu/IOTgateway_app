@@ -9,18 +9,26 @@
 
     >
 
+    <Spinner
+        android:id="@+id/spnCategory"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/NhietdoChart"
+        android:layout_alignLeft="@+id/NhietdoChart"
+
+        android:layout_marginTop="30dp"
+        android:spinnerMode="dropdown" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/NhietdoChart"
-        android:layout_centerVertical="true"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
+
 
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="120dp"
         android:layout_marginEnd="20dp"
         tools:ignore="MissingClass" />
-
 
     <Button
         android:id="@+id/BtnNDChart"

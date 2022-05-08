@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-    
     android:weightSum="20"
     android:orientation="vertical"
     android:layout_height="match_parent"

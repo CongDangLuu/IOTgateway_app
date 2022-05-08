@@ -2,8 +2,8 @@ package llcd.com.iotgatewaylvtn;
 
 
 public class Urls {
-    //public static final String ROOT_URL = "http://iotgatewaylvtn.online/fileiotgateway/Android/";
-    public static final String ROOT_URL = "http://iotgatewaylvtn.000webhostapp.com/";
+    //public static final String ROOT_URL = "/home/highalln/luanvanlogistic.highallnight.com/AppIoTgateway/WriteData.php";
+    public static final String ROOT_URL = "http://luanvanlogistic.highallnight.com/AppIoTgateway/";
 
     public static final String GETDATAWFI1_URL = ROOT_URL + "AndroidGetdata/getdataWIF1.php";
     public static final String GETDATAWFI2_URL = ROOT_URL + "AndroidGetdata/getdataWIF2.php";

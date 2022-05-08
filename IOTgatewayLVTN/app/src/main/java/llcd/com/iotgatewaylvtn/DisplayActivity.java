@@ -140,7 +140,7 @@ public class DisplayActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(DisplayActivity.this);
         queue.add(stringRequest);
     }
-    
+
 }
 
 

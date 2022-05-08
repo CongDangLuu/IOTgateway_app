@@ -42,6 +42,7 @@
             android:name=".HistoryDisplayActivity"
             android:exported="true"
             tools:ignore="DuplicateActivity"></activity>
+
     </application>
 
 
