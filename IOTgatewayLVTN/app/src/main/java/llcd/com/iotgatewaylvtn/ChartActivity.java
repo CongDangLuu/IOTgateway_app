@@ -53,7 +53,7 @@ public class ChartActivity extends AppCompatActivity {
     LineChart chart;
     XAxis xAxis;
     YAxis leftAxis;
-    Date datetime;
+
     String Timest, day, Pre_day, time,set_day="";
 
 
@@ -83,7 +83,6 @@ public class ChartActivity extends AppCompatActivity {
 
         spnCategory = findViewById(R.id.spnCategory);
 
-        //URL = "http://luanvanlogistic.highallnight.com/AppIoTgateway/AndroidGetdata/getdataWIF1.php";
         URL = BtnActivity.GETDATA_URL;
 
         combobox(URL);

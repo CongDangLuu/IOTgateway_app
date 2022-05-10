@@ -26,16 +26,19 @@
         android:orientation="horizontal"
         android:layout_below="@id/DVName"
          >
-        <TextView
+
+        <Spinner
+            android:id="@+id/spnCategoryHistory"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:text="Thời gian"
+            android:spinnerMode="dropdown"
+            android:background="@drawable/nenxanh"
             android:textSize="20sp"
             android:gravity="center"
             android:textColor="#FFF"
-            android:background="@drawable/nenxanh"
-            />
+            android:padding="5dip"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
