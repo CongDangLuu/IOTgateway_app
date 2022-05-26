@@ -83,9 +83,11 @@ public class ChartActivity extends AppCompatActivity {
 
         spnCategory = findViewById(R.id.spnCategory);
 
-        URL = BtnActivity.GETDATA_URL;
+        URL = Urls.GetDatabase + BtnActivity.Pro +".php";
 
         combobox(URL);
+
+
 
 
         NDChart.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +124,7 @@ public class ChartActivity extends AppCompatActivity {
 
     private void GetChart(String url, String lable, String type, String day_c) {
         RequestQueue queue = Volley.newRequestQueue(this);
+
         // 2.truyền đường dẫn vào request
         JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -143,15 +146,15 @@ public class ChartActivity extends AppCompatActivity {
                             String tg[] = splits[1].split(":");
                             day = splits[0];
                             time = tg[0];
-                             t = Integer.parseInt(time);
+                            t = Integer.parseInt(time);
                             if((day.equals(day_c))&&(i==t)){
                                 float value = Float.parseFloat(person.getString(type));
-                                 sum +=value;
-                                 a++;
+                                sum +=value;
+                                a++;
                             }
 
                         } catch (JSONException e) {
-                                e.printStackTrace();
+                            e.printStackTrace();
                         }
                     }
                     float x = sum/a;
@@ -159,6 +162,7 @@ public class ChartActivity extends AppCompatActivity {
                     dataSet.add(new Entry(i, ValOfChart));
 
                 }
+
 
 
                 String str = lable + " - " + day_c;
@@ -201,9 +205,9 @@ public class ChartActivity extends AppCompatActivity {
                 legend.setCustom(legendEntries);
                 lineDataSet.setDrawCircles(false);
 
-                lineDataSet.setLineWidth(1.2f);
+                lineDataSet.setLineWidth(1.5f);
                 lineDataSet.setValueTextColor(Color.BLACK);
-                lineDataSet.setValueTextSize(9f);
+                lineDataSet.setValueTextSize(6f);
 
                 legend.setTextSize(15);
                 legend.setForm(Legend.LegendForm.LINE);
@@ -240,12 +244,12 @@ public class ChartActivity extends AppCompatActivity {
         if( type=="ND"){
 
             leftAxis.setAxisMinimum(0f);
-            leftAxis.setAxisMaximum(45f);
+            leftAxis.setAxisMaximum(50f);
         }else if( type=="AS"){
             leftAxis.setAxisMinimum(0f);
-            leftAxis.setAxisMaximum(200f);
+            leftAxis.setAxisMaximum(500f);
         }else if( type == "DA"){
-            leftAxis.setAxisMinimum(40f);
+            leftAxis.setAxisMinimum(0f);
             leftAxis.setAxisMaximum(100f);
         }
     }

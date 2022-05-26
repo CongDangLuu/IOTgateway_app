@@ -35,7 +35,7 @@
             android:layout_weight="5"
             android:background="#4CAF50"
             android:gravity="center_vertical"
-            android:text="   No connected devices:"
+            android:text="   Connected devices:"
             android:textColor="#000"
             android:textSize="22sp" />
 

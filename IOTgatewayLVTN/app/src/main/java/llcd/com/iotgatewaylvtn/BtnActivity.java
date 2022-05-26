@@ -27,10 +27,10 @@ public class BtnActivity extends AppCompatActivity {
     public static Button btnSub1, btnSub2, btnSub3, btnSub4, btnSub5;
     public static Button btnBlu1, btnBlu2;
     public static TextView NoDV;
-    public static String GETDATA_URL ="";
+    public static String Json_URL,Database_URL ="";
     public static String Pro, Protxt, MCU ="";
     private int a =1;
-    int stt[]={0,0,0,0,0};//Wifi 1, Wifi 2, Blu 1, Blu2, Sub.
+    int stt[]={0,0,0,0,0,0,0,0,0,0,0,0};//Wifi 1, Wifi 2, Blu 1, Blu2, Sub.
     int pre_stt[]={0,0,0,0,0};
     public int No;
 
@@ -56,7 +56,7 @@ public class BtnActivity extends AppCompatActivity {
 
         btnBlu1 = findViewById(R.id.btnBlu1);
         btnBlu2 = findViewById(R.id.btnBlu2);
-        GETDATA_URL ="";
+        Json_URL = Database_URL ="";
 
 //sttdv
         new CountDownTimer(1000000000,1000) {
@@ -82,10 +82,8 @@ public class BtnActivity extends AppCompatActivity {
         btnWif1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATAWFI1_URL;
                 Protxt = "WIFI 1";
-                Pro = "WIF1";
+                Pro = "WIFI1";
                 MCU = "ESP";
                 SwScream();
 
@@ -94,10 +92,8 @@ public class BtnActivity extends AppCompatActivity {
         btnWif2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATAWFI2_URL;
                 Protxt = "WIFI 2";
-                Pro = "WIF2";
+                Pro = "WIFI2";
                 MCU = "ESP";
                 SwScream();
             }
@@ -105,10 +101,8 @@ public class BtnActivity extends AppCompatActivity {
         btnWif3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATAWFI3_URL;
                 Protxt = "WIFI 3";
-                Pro = "WIF3";
+                Pro = "WIFI3";
                 MCU = "ESP";
                 SwScream();
             }
@@ -116,10 +110,8 @@ public class BtnActivity extends AppCompatActivity {
         btnWif4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATAWFI4_URL;
                 Protxt = "WIFI 4";
-                Pro = "WIF4";
+                Pro = "WIFI4";
                 MCU = "ESP";
                 SwScream();
             }
@@ -127,10 +119,8 @@ public class BtnActivity extends AppCompatActivity {
         btnWif5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATAWFI5_URL;
                 Protxt = "WIFI 5";
-                Pro = "WIF5";
+                Pro = "WIFI5";
                 MCU = "ESP";
                 SwScream();
             }
@@ -139,8 +129,6 @@ public class BtnActivity extends AppCompatActivity {
         btnBlu1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATABLU1_URL;
                 Protxt = "BLUETOOTH 1";
                 Pro = "BLU1";
                 MCU = "STM";
@@ -150,8 +138,6 @@ public class BtnActivity extends AppCompatActivity {
         btnBlu2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATABLU2_URL;
                 Protxt = "BLUETOOTH 2";
                 Pro = "BLU2";
                 MCU = "STM";
@@ -162,10 +148,8 @@ public class BtnActivity extends AppCompatActivity {
         btnSub1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATASUB1_URL;
                 Protxt = "Sub-Ghz 1";
-                Pro = "Sub1";
+                Pro = "SUB1";
                 MCU = "STM";
                 SwScream();
 
@@ -174,10 +158,8 @@ public class BtnActivity extends AppCompatActivity {
         btnSub2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATASUB2_URL;
                 Protxt = "Sub-Ghz 2";
-                Pro = "Sub2";
+                Pro = "SUB2";
                 MCU = "STM";
                 SwScream();
             }
@@ -185,10 +167,8 @@ public class BtnActivity extends AppCompatActivity {
         btnSub3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATASUB3_URL;
                 Protxt = "Sub-Ghz 3";
-                Pro = "Sub3";
+                Pro = "SUB3";
                 MCU = "STM";
                 SwScream();
             }
@@ -196,10 +176,8 @@ public class BtnActivity extends AppCompatActivity {
         btnSub4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATASUB4_URL;
                 Protxt = "Sub-Ghz 4";
-                Pro = "Sub4";
+                Pro = "SUB4";
                 MCU = "STM";
                 SwScream();
             }
@@ -207,10 +185,8 @@ public class BtnActivity extends AppCompatActivity {
         btnSub5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GETDATA_URL = "";
-                GETDATA_URL = Urls.GETDATASUB5_URL;
                 Protxt = "Sub-Ghz 5";
-                Pro = "Sub5";
+                Pro = "SUB5";
                 MCU = "STM";
                 SwScream();
             }
@@ -301,7 +277,7 @@ public class BtnActivity extends AppCompatActivity {
 
     private static int valStt(String str){
         int a;
-        if(str ==""){
+        if(str.equals("")){
             a=0;
         }else{
             a = Integer.parseInt(str);

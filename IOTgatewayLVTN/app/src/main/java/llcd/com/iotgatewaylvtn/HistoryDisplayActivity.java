@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import llcd.com.iotgatewaylvtn.GetDataVolley.GetDataDB;
+
 
 public class HistoryDisplayActivity extends AppCompatActivity {
 
@@ -34,10 +34,10 @@ public class HistoryDisplayActivity extends AppCompatActivity {
     ArrayList<DataHistory> arrayData;
     HistoryAdapter adapter;
 
-    private Spinner spnCategory;
-    private List<String> list;
+    private Spinner spnCategory, spnCategoryHour;
+    private List<String> list, listHour;
 
-    String Timest, day, Pre_day ,set_day="";
+    String Timest, day, Pre_day , hour, set_day, set_hour="";
 
     String URL;
     public static TextView DVName;
@@ -52,14 +52,29 @@ public class HistoryDisplayActivity extends AppCompatActivity {
 
         DVName = findViewById(R.id.DVName);
         spnCategory = findViewById(R.id.spnCategoryHistory);
+        spnCategoryHour = findViewById(R.id.spnCategoryHistoryHour);
 
-        URL = BtnActivity.GETDATA_URL;
-        HistoryDisplayActivity.DVName.setText(GetDataDB.DVnamestr);
+        set_hour= DisplayActivity.hour;
+        listHour = new ArrayList<>();
+        listHour.add("Select hour...");
+        for(int i =0; i<24;i++){
+            String str =String.valueOf(i);
+            if(i<10){
+                str ="0"+ String.valueOf(i);
+            }
+            listHour.add(str);
+
+        }
+
+
+
+        URL = Urls.GetDatabase + BtnActivity.Pro +".php";
+        HistoryDisplayActivity.DVName.setText(DisplayActivity.Name);
 
         combobox(URL);
     }
 
-    private void Getdata(String url, String Set_day){
+    private void Getdata(String url, String day_select, String hour_select){
         arrayData = new ArrayList<>();
         adapter = new HistoryAdapter(this, R.layout.activity_history_view, arrayData);
         LVHistory.setAdapter(adapter);
@@ -68,13 +83,17 @@ public class HistoryDisplayActivity extends AppCompatActivity {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        for (int i =0; i< response.length() ; i++){
+                        int flat =0;
+                        for (int i = response.length()-1; i>=0 ; i--){
                             try {
                                 JSONObject object = response.getJSONObject(i);
                                 Timest = object.getString("Time");
                                 String splits[] = Timest.split(" ");
                                 day = splits[0];
-                                if(day.equals(set_day)){
+                                String tg[] = splits[1].split(":");
+                                hour = tg[0];
+                                if(day.equals(day_select) && hour.equals(hour_select)){
+                                    flat =1;
                                     arrayData.add(new DataHistory(
                                             splits[1],
                                             object.getString("ND"),
@@ -82,6 +101,8 @@ public class HistoryDisplayActivity extends AppCompatActivity {
                                             object.getString("AS"),
                                             object.getString("TT")
                                     ));
+                                }else if(flat==1){
+                                    break;
                                 }
 
 
@@ -103,6 +124,7 @@ public class HistoryDisplayActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
+
     private void combobox(String url) {
         list = new ArrayList<>();
 
@@ -113,7 +135,6 @@ public class HistoryDisplayActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 // chuyen mang thanh chuoi
-                Pre_day=day="";
 
                 for (int i = response.length() - 1; i >= 0; i--) {
                     try {
@@ -140,6 +161,7 @@ public class HistoryDisplayActivity extends AppCompatActivity {
     }
 
     private void showCombobox(List<String> list){
+        //Spinner day
         ArrayAdapter<String> adapter = new ArrayAdapter(this, R.layout.spinner_list,list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -148,13 +170,31 @@ public class HistoryDisplayActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 set_day = list.get(position);
-                Getdata(URL, set_day);
+                Getdata(URL, set_day, set_hour);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 set_day= list.get(0);
-                Getdata(URL, set_day);
+                Getdata(URL, set_day, set_hour);
+
+            }
+        });
+        //Spinner hour
+        ArrayAdapter<String> adapterHour = new ArrayAdapter(this, R.layout.spinner_list,listHour);
+        adapterHour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spnCategoryHour.setAdapter(adapterHour);
+        spnCategoryHour.setSelection(Integer.parseInt(set_hour)+1);
+        spnCategoryHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                set_hour = listHour.get(position);
+                Getdata(URL, set_day, set_hour );
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
     }

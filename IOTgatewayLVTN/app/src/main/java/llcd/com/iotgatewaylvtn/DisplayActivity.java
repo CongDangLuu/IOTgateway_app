@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -20,18 +21,26 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import llcd.com.iotgatewaylvtn.GetDataVolley.GetDataDB;
+
 
 public class DisplayActivity extends AppCompatActivity {
     TextView NDtxt, DAtxt, AStxt, Prttxt, DVname, TTtxt;
     String Pro, Stt, MCU = "";
 
-    String SetND, SetDA, SetAS, SetTT, SetName = "";
     String UrlDB = "";
     String url_control = Urls.Control_path;
+    public static String Name,hour;
+
     Button HistoryBtn, BtnOn, BtnOff, ChartBtn;
     public static CountDownTimer timerDisplay;
     public static int flattimer = 0;
@@ -57,19 +66,18 @@ public class DisplayActivity extends AppCompatActivity {
         Pro = BtnActivity.Pro;
         MCU = BtnActivity.MCU;
         Prttxt.setText(BtnActivity.Protxt);
-        UrlDB = BtnActivity.GETDATA_URL;
+        UrlDB = Urls.GETDataJson + Pro +".json";
 
        timerDisplay = new CountDownTimer(1000000000, 1000) {
            @Override
             public void onTick(long millisUntilFinished) {
                flattimer =1;
-               GetDataDB data = new GetDataDB();
-               data.getJSONArray(DisplayActivity.this, UrlDB);
-               DVname.setText(GetDataDB.DVnamestr);
-               NDtxt.setText(GetDataDB.NDstr);
-               DAtxt.setText(GetDataDB.DAstr);
-               AStxt.setText(GetDataDB.ASstr);
-               TTtxt.setText(GetDataDB.TTstr);
+               runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+                       new DisplayActivity.dataJson().execute(UrlDB);
+                   }
+               });
             }
 
             @Override
@@ -130,7 +138,7 @@ public class DisplayActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("Pro", Pro);
+                params.put("Device", Pro);
                 params.put("Stt", Stt);
                 params.put("MCU", MCU);
 
@@ -141,6 +149,55 @@ public class DisplayActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    class dataJson extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return readJson(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try {
+                String a;
+                JSONObject person = new JSONObject(s);
+                Name =person.getString("Name");
+                DVname.setText(Name);
+                NDtxt.setText(person.getString("Temperature"));
+                DAtxt.setText(person.getString("Humidity"));
+                AStxt.setText(person.getString("Light"));
+                TTtxt.setText(person.getString("Status"));
+
+                String timest = person.getString("Time");
+                String slp[] = timest.split(" ");
+                String tg[] = slp[1].split(":");
+                hour = tg[0];
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static String readJson(String theUrl) {
+        StringBuilder content = new StringBuilder();
+
+        try {
+            // create a url object
+            URL url = new URL(theUrl);
+            // create a urlconnection object
+            URLConnection urlConnection = url.openConnection();
+            // wrap the urlconnection in a bufferedreader
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line;
+            // read from the urlconnection via the bufferedreader
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line + "\n");
+                bufferedReader.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content.toString();
+    }
 }
 
 
